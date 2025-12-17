@@ -3,1665 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Submissions</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- PDF Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
+    <title>Debug - Test API</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            padding: 40px 20px;
-            color: white;
-        }
-
-        .header h1 {
-            font-size: 36px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            font-size: 16px;
-            opacity: 0.9;
-        }
-
-        /* Navigation */
-        .nav-links {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .nav-links a {
-            padding: 10px 25px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            background: white;
-            color: #667eea;
-        }
-
-        .nav-links a.active {
-            background: white;
-            color: #667eea;
-        }
-
-        /* Stats Bar */
-        .stats-bar {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin: 30px 0;
-            flex-wrap: wrap;
-        }
-
-        .stat-item {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 15px 30px;
-            border-radius: 15px;
-            text-align: center;
-            color: white;
-            backdrop-filter: blur(10px);
-        }
-
-        .stat-number {
-            font-size: 32px;
-            font-weight: 700;
-        }
-
-        .stat-label {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        /* Controls */
-        .controls {
-            max-width: 1200px;
-            margin: 0 auto 20px;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .search-box {
-            flex: 1;
-            min-width: 250px;
-            max-width: 400px;
-            position: relative;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 15px 20px 15px 50px;
-            border: none;
-            border-radius: 50px;
-            font-size: 15px;
-            font-family: inherit;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .search-box input:focus {
-            outline: none;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .search-box::before {
-            content: '🔍';
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 18px;
-        }
-
-        .filter-btn {
-            padding: 15px 25px;
-            background: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 14px;
-            font-family: inherit;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .filter-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .refresh-btn {
-            padding: 15px 25px;
-            background: #10b981;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 14px;
-            font-family: inherit;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
-        }
-
-        .refresh-btn:hover {
-            background: #059669;
-            transform: translateY(-2px);
-        }
-
-        /* View Toggle */
-        .view-toggle {
-            display: flex;
-            background: white;
-            border-radius: 50px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .view-toggle button {
-            padding: 15px 20px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            font-size: 18px;
-            transition: all 0.3s ease;
-        }
-
-        .view-toggle button.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        /* ==================== PDF/PRINT CONTROLS ==================== */
-        .export-controls {
-            max-width: 1200px;
-            margin: 0 auto 20px;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            padding: 15px 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-
-        .select-all-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: white;
-            font-weight: 500;
-        }
-
-        .select-all-wrapper input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: #667eea;
-        }
-
-        .selected-count {
-            color: white;
-            font-weight: 600;
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-        }
-
-        .export-btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 50px;
-            font-size: 14px;
-            font-family: inherit;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .export-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .export-btn.pdf-btn {
-            background: #ef4444;
-            color: white;
-            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
-        }
-
-        .export-btn.pdf-btn:hover:not(:disabled) {
-            background: #dc2626;
-            transform: translateY(-2px);
-        }
-
-        .export-btn.print-btn {
-            background: #3b82f6;
-            color: white;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
-        }
-
-        .export-btn.print-btn:hover:not(:disabled) {
-            background: #2563eb;
-            transform: translateY(-2px);
-        }
-
-        .export-btn.excel-btn {
-            background: #22c55e;
-            color: white;
-            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
-        }
-
-        .export-btn.excel-btn:hover:not(:disabled) {
-            background: #16a34a;
-            transform: translateY(-2px);
-        }
-
-        /* Container */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Loading State */
-        .loading {
-            text-align: center;
-            padding: 60px 20px;
-            color: white;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: white;
-        }
-
-        .empty-state .icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-        }
-
-        .empty-state h2 {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        /* Grid View */
-        .grid-view {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 25px;
-        }
-
-        /* Card */
-        .card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            animation: fadeInUp 0.5s ease;
-            position: relative;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
-        }
-
-        .card.selected {
-            box-shadow: 0 0 0 3px #667eea, 0 25px 60px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Card Checkbox */
-        .card-checkbox {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            z-index: 10;
-        }
-
-        .card-checkbox input[type="checkbox"] {
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            accent-color: #667eea;
-            border-radius: 6px;
-        }
-
-        /* Card Image */
-        .card-image {
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .card-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover .card-image img {
-            transform: scale(1.05);
-        }
-
-        .card-image .no-image {
-            font-size: 60px;
-            opacity: 0.3;
-        }
-
-        .card-image .view-full {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 8px 15px;
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            border-radius: 20px;
-            font-size: 12px;
-            text-decoration: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .card:hover .view-full {
-            opacity: 1;
-        }
-
-        /* Card Content */
-        .card-content {
-            padding: 25px;
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .avatar {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 18px;
-        }
-
-        .card-title {
-            flex: 1;
-        }
-
-        .card-title h3 {
-            font-size: 18px;
-            color: #1f2937;
-            margin-bottom: 3px;
-        }
-
-        .card-title span {
-            font-size: 13px;
-            color: #6b7280;
-        }
-
-        .card-subject {
-            display: inline-block;
-            padding: 5px 12px;
-            background: linear-gradient(135deg, #667eea15, #764ba215);
-            color: #667eea;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .card-message {
-            color: #4b5563;
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 15px;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .card-info {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding-top: 15px;
-            border-top: 1px solid #f3f4f6;
-        }
-
-        .card-info-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            color: #6b7280;
-        }
-
-        .card-info-item .icon {
-            font-size: 16px;
-        }
-
-        .card-info-item a {
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        .card-timestamp {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #f3f4f6;
-            font-size: 12px;
-            color: #9ca3af;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* Table View */
-        .table-view {
-            display: none;
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        .table-view.active {
-            display: block;
-        }
-
-        .grid-view.hidden {
-            display: none;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .data-table thead {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .data-table th {
-            padding: 18px 15px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .data-table tbody tr {
-            border-bottom: 1px solid #f3f4f6;
-            transition: background 0.3s ease;
-        }
-
-        .data-table tbody tr:hover {
-            background: #f9fafb;
-        }
-
-        .data-table tbody tr.selected {
-            background: #ede9fe;
-        }
-
-        .data-table td {
-            padding: 15px;
-            font-size: 14px;
-            color: #4b5563;
-        }
-
-        .data-table .checkbox-cell {
-            width: 50px;
-            text-align: center;
-        }
-
-        .data-table .checkbox-cell input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: #667eea;
-        }
-
-        .data-table .photo-cell img {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .data-table .photo-cell img:hover {
-            transform: scale(1.1);
-        }
-
-        .data-table .message-cell {
-            max-width: 300px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        /* Image Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .modal.show {
-            display: flex;
-        }
-
-        .modal img {
-            max-width: 90%;
-            max-height: 90%;
-            border-radius: 10px;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            font-size: 40px;
-            color: white;
-            cursor: pointer;
-        }
-
-        /* ==================== PDF TEMPLATE (Hidden) ==================== */
-        .pdf-template {
-            display: none;
-            font-family: 'Poppins', Arial, sans-serif;
-            background: white;
+            font-family: Arial, sans-serif;
             padding: 40px;
-            width: 210mm;
+            background: #f5f5f5;
         }
-
-        .pdf-header {
-            text-align: center;
-            padding-bottom: 30px;
-            border-bottom: 3px solid #667eea;
-            margin-bottom: 30px;
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
-
-        .pdf-header h1 {
+        h1 {
             color: #667eea;
-            font-size: 28px;
-            margin-bottom: 5px;
         }
-
-        .pdf-header p {
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-        .pdf-meta {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            padding: 15px;
-            background: #f3f4f6;
+        .status {
+            padding: 20px;
             border-radius: 10px;
+            margin: 20px 0;
         }
-
-        .pdf-meta-item {
-            text-align: center;
+        .status.loading {
+            background: #fef3c7;
+            color: #92400e;
         }
-
-        .pdf-meta-item .label {
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .data-preview {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-family: monospace;
             font-size: 12px;
-            color: #6b7280;
+            max-height: 400px;
+            overflow-y: auto;
         }
-
-        .pdf-meta-item .value {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1f2937;
-        }
-
-        .pdf-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
-        }
-
-        .pdf-table th {
+        button {
+            padding: 15px 30px;
             background: #667eea;
             color: white;
-            padding: 12px 10px;
-            text-align: left;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .pdf-table td {
-            padding: 12px 10px;
-            border-bottom: 1px solid #e5e7eb;
-            font-size: 11px;
-            color: #374151;
-            vertical-align: top;
-        }
-
-        .pdf-table tr:nth-child(even) {
-            background: #f9fafb;
-        }
-
-        .pdf-table .photo-thumb {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 5px;
-        }
-
-        .pdf-table .message-text {
-            max-width: 200px;
-            word-wrap: break-word;
-        }
-
-        .pdf-footer {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-            color: #9ca3af;
-            font-size: 11px;
-        }
-
-        /* Card PDF Template */
-        .pdf-cards {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .pdf-card {
-            border: 1px solid #e5e7eb;
+            border: none;
             border-radius: 10px;
-            overflow: hidden;
-            page-break-inside: avoid;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px 5px 10px 0;
         }
-
-        .pdf-card-image {
-            height: 120px;
-            background: #f3f4f6;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        button:hover {
+            background: #5a67d8;
         }
-
-        .pdf-card-image img {
+        input {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .pdf-card-content {
             padding: 15px;
-        }
-
-        .pdf-card-name {
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
             font-size: 14px;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 5px;
+            margin: 10px 0;
         }
-
-        .pdf-card-email {
-            font-size: 11px;
+        .info {
+            background: #ede9fe;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        a {
             color: #667eea;
-            margin-bottom: 10px;
-        }
-
-        .pdf-card-message {
-            font-size: 11px;
-            color: #4b5563;
-            line-height: 1.5;
-        }
-
-        .pdf-card-footer {
-            font-size: 10px;
-            color: #9ca3af;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #f3f4f6;
-        }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 40px 20px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-        }
-
-        .footer a {
-            color: white;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 28px;
-            }
-
-            .stats-bar {
-                gap: 15px;
-            }
-
-            .stat-item {
-                padding: 12px 20px;
-            }
-
-            .stat-number {
-                font-size: 24px;
-            }
-
-            .grid-view {
-                grid-template-columns: 1fr;
-            }
-
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .search-box {
-                max-width: 100%;
-            }
-
-            .export-controls {
-                flex-direction: column;
-            }
-
-            .data-table {
-                font-size: 12px;
-            }
-
-            .data-table th,
-            .data-table td {
-                padding: 10px 8px;
-            }
-        }
-
-        /* Print Styles */
-        @media print {
-            body {
-                background: white !important;
-                padding: 0 !important;
-            }
-
-            .header, .nav-links, .stats-bar, .controls, 
-            .export-controls, .view-toggle, .footer,
-            .whatsapp-float, .modal {
-                display: none !important;
-            }
-
-            .container {
-                max-width: 100% !important;
-            }
-
-            .grid-view {
-                display: block !important;
-            }
-
-            .card {
-                break-inside: avoid;
-                box-shadow: none !important;
-                border: 1px solid #ddd;
-                margin-bottom: 20px;
-            }
-
-            .card-checkbox {
-                display: none !important;
-            }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <div class="header">
-        <h1>📋 All Submissions</h1>
-        <p>View all form submissions with photos</p>
-        
-        <div class="nav-links">
-            <a href="index.html">📝 Submit Form</a>
-            <a href="submissions.html" class="active">📋 View Submissions</a>
-        </div>
-    </div>
-
-    <!-- Stats Bar -->
-    <div class="stats-bar">
-        <div class="stat-item">
-            <div class="stat-number" id="totalCount">-</div>
-            <div class="stat-label">Total Submissions</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-number" id="todayCount">-</div>
-            <div class="stat-label">Today</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-number" id="withPhotoCount">-</div>
-            <div class="stat-label">With Photos</div>
-        </div>
-    </div>
-
-    <!-- Export Controls -->
-    <div class="export-controls">
-        <div class="select-all-wrapper">
-            <input type="checkbox" id="selectAll">
-            <label for="selectAll">Select All</label>
-        </div>
-        
-        <div class="selected-count">
-            <span id="selectedCount">0</span> selected
-        </div>
-
-        <button class="export-btn pdf-btn" id="downloadPdfBtn" disabled onclick="downloadPDF()">
-            📄 Download PDF
-        </button>
-
-        <button class="export-btn print-btn" id="printBtn" disabled onclick="printSelected()">
-            🖨️ Print
-        </button>
-
-        <button class="export-btn excel-btn" id="downloadCsvBtn" disabled onclick="downloadCSV()">
-            📊 Download CSV
-        </button>
-    </div>
-
-    <!-- Controls -->
-    <div class="controls">
-        <div class="search-box">
-            <input 
-                type="text" 
-                id="searchInput" 
-                placeholder="Search by name, email, message..."
-            >
-        </div>
-        
-        <select class="filter-btn" id="subjectFilter">
-            <option value="">All Subjects</option>
-            <option value="General Inquiry">General Inquiry</option>
-            <option value="Product Support">Product Support</option>
-            <option value="Sales Question">Sales Question</option>
-            <option value="Partnership">Partnership</option>
-            <option value="Feedback">Feedback</option>
-            <option value="Other">Other</option>
-        </select>
-
-        <button class="refresh-btn" onclick="loadData()">
-            🔄 Refresh
-        </button>
-
-        <div class="view-toggle">
-            <button id="gridViewBtn" class="active" onclick="setView('grid')">📱</button>
-            <button id="tableViewBtn" onclick="setView('table')">📊</button>
-        </div>
-    </div>
-
-    <!-- Container -->
     <div class="container">
-        <!-- Loading State -->
-        <div class="loading" id="loadingState">
-            <div class="loading-spinner"></div>
-            <p>Loading submissions...</p>
+        <h1>🔧 API Debug & Test Tool</h1>
+        
+        <div class="info">
+            <strong>Instructions:</strong>
+            <ol>
+                <li>Enter your SheetDB API URL below</li>
+                <li>Click "Test API"</li>
+                <li>See the result</li>
+            </ol>
         </div>
 
-        <!-- Empty State -->
-        <div class="empty-state" id="emptyState" style="display: none;">
-            <div class="icon">📭</div>
-            <h2>No Submissions Yet</h2>
-            <p>Be the first to submit the form!</p>
+        <label><strong>Your SheetDB API URL:</strong></label>
+        <input 
+            type="text" 
+            id="apiUrl" 
+            placeholder="https://sheetdb.io/api/v1/your_api_id_here"
+            value=""
+        >
+
+        <button onclick="testAPI()">🧪 Test API</button>
+        <button onclick="testWithSample()">📝 Test with Sample Data</button>
+
+        <div class="status loading" id="status" style="display: none;">
+            Testing...
         </div>
 
-        <!-- Grid View -->
-        <div class="grid-view" id="gridView"></div>
-
-        <!-- Table View -->
-        <div class="table-view" id="tableView">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th class="checkbox-cell">
-                            <input type="checkbox" id="selectAllTable">
-                        </th>
-                        <th>Photo</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Subject</th>
-                        <th>Message</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- PDF Template (Hidden - Used for generating PDF) -->
-    <div class="pdf-template" id="pdfTemplate">
-        <div class="pdf-header">
-            <h1>📋 Submissions Report</h1>
-            <p>Generated on <span id="pdfDate"></span></p>
+        <h3>📊 Result:</h3>
+        <div class="data-preview" id="result">
+            Results will appear here...
         </div>
 
-        <div class="pdf-meta">
-            <div class="pdf-meta-item">
-                <div class="label">Total Records</div>
-                <div class="value" id="pdfTotalRecords">0</div>
-            </div>
-            <div class="pdf-meta-item">
-                <div class="label">With Photos</div>
-                <div class="value" id="pdfWithPhotos">0</div>
-            </div>
-            <div class="pdf-meta-item">
-                <div class="label">Report Type</div>
-                <div class="value">Selected Items</div>
-            </div>
+        <hr style="margin: 30px 0;">
+
+        <h3>📋 Checklist:</h3>
+        <div class="info">
+            <p>✅ <strong>API URL Format:</strong> https://sheetdb.io/api/v1/xxxxxxxx</p>
+            <p>✅ <strong>Google Sheet Shared:</strong> "Anyone with link" can view</p>
+            <p>✅ <strong>Column Headers:</strong> name, email, phone, subject, message, photo, timestamp</p>
+            <p>✅ <strong>Has Data:</strong> At least one row of data in sheet</p>
         </div>
 
-        <table class="pdf-table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Photo</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Subject</th>
-                    <th>Message</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody id="pdfTableBody"></tbody>
-        </table>
-
-        <div class="pdf-footer">
-            Generated by Your Company Name | Confidential Report
-        </div>
-    </div>
-
-    <!-- Image Modal -->
-    <div class="modal" id="imageModal">
-        <span class="modal-close" onclick="closeModal()">×</span>
-        <img id="modalImage" src="" alt="Full Image">
-    </div>
-
-    <!-- Footer -->
-    <div class="footer">
-        Made with ❤️ | <a href="#">Your Company Name</a>
+        <h3>🔗 Quick Links:</h3>
+        <p>
+            <a href="https://sheetdb.io" target="_blank">→ SheetDB Dashboard</a><br>
+            <a href="https://sheets.google.com" target="_blank">→ Google Sheets</a><br>
+            <a href="index.html">→ Back to Form</a>
+        </p>
     </div>
 
     <script>
-        // =====================================================
-        // 🔴🔴🔴 REPLACE WITH YOUR SHEETDB API URL 🔴🔴🔴
-        // =====================================================
-        const SHEETDB_API_URL = 'https://sheetdb.io/api/v1/z9br7effr4tm1E';
-        // =====================================================
+        // Check if there's a saved API URL
+        const savedUrl = localStorage.getItem('sheetdb_api_url');
+        if (savedUrl) {
+            document.getElementById('apiUrl').value = savedUrl;
+        }
 
-        // DOM Elements
-        const loadingState = document.getElementById('loadingState');
-        const emptyState = document.getElementById('emptyState');
-        const gridView = document.getElementById('gridView');
-        const tableView = document.getElementById('tableView');
-        const tableBody = document.getElementById('tableBody');
-        const searchInput = document.getElementById('searchInput');
-        const subjectFilter = document.getElementById('subjectFilter');
-        const imageModal = document.getElementById('imageModal');
-        const modalImage = document.getElementById('modalImage');
-        const selectAllCheckbox = document.getElementById('selectAll');
-        const selectAllTableCheckbox = document.getElementById('selectAllTable');
-        const selectedCountEl = document.getElementById('selectedCount');
-        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
-        const printBtn = document.getElementById('printBtn');
-        const downloadCsvBtn = document.getElementById('downloadCsvBtn');
+        async function testAPI() {
+            const apiUrl = document.getElementById('apiUrl').value.trim();
+            const statusEl = document.getElementById('status');
+            const resultEl = document.getElementById('result');
 
-        // Stats elements
-        const totalCount = document.getElementById('totalCount');
-        const todayCount = document.getElementById('todayCount');
-        const withPhotoCount = document.getElementById('withPhotoCount');
+            // Validate URL
+            if (!apiUrl) {
+                statusEl.style.display = 'block';
+                statusEl.className = 'status error';
+                statusEl.innerHTML = '❌ Please enter your SheetDB API URL';
+                return;
+            }
 
-        // Store data
-        let allData = [];
-        let filteredData = [];
-        let selectedItems = new Set();
-        let currentView = 'grid';
+            if (!apiUrl.includes('sheetdb.io/api/v1/')) {
+                statusEl.style.display = 'block';
+                statusEl.className = 'status error';
+                statusEl.innerHTML = '❌ Invalid URL format. Should be: https://sheetdb.io/api/v1/YOUR_ID';
+                return;
+            }
 
-        // Load data on page load
-        document.addEventListener('DOMContentLoaded', loadData);
+            // Save URL
+            localStorage.setItem('sheetdb_api_url', apiUrl);
 
-        // Search functionality
-        searchInput.addEventListener('input', filterData);
-        subjectFilter.addEventListener('change', filterData);
+            // Show loading
+            statusEl.style.display = 'block';
+            statusEl.className = 'status loading';
+            statusEl.innerHTML = '⏳ Testing API connection...';
+            resultEl.textContent = 'Loading...';
 
-        // Select All functionality
-        selectAllCheckbox.addEventListener('change', toggleSelectAll);
-        selectAllTableCheckbox.addEventListener('change', toggleSelectAll);
-
-        // ==================== DATA LOADING ====================
-
-        async function loadData() {
-            showLoading(true);
-            selectedItems.clear();
-            updateSelectedCount();
-            
             try {
-                const response = await fetch(SHEETDB_API_URL);
+                console.log('Testing URL:', apiUrl);
                 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
-                }
+                const response = await fetch(apiUrl);
                 
-                const data = await response.json();
-                console.log('Fetched data:', data);
-                
-                allData = data.reverse();
-                filteredData = [...allData];
-                
-                updateStats(allData);
-                
-                if (allData.length === 0) {
-                    showEmpty(true);
-                } else {
-                    showEmpty(false);
-                    displayData(filteredData);
-                }
-                
-            } catch (error) {
-                console.error('Error loading data:', error);
-                gridView.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1/-1;">
-                        <div class="icon">❌</div>
-                        <h2>Error Loading Data</h2>
-                        <p>${error.message}</p>
-                    </div>
-                `;
-            } finally {
-                showLoading(false);
-            }
-        }
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
 
-        // ==================== STATS ====================
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
 
-        function updateStats(data) {
-            totalCount.textContent = data.length;
-            
-            const today = new Date().toDateString();
-            const todaySubmissions = data.filter(item => {
-                const itemDate = new Date(item.timestamp).toDateString();
-                return itemDate === today;
-            });
-            todayCount.textContent = todaySubmissions.length;
-            
-            const withPhotos = data.filter(item => item.photo && item.photo.trim() !== '');
-            withPhotoCount.textContent = withPhotos.length;
-        }
-
-        // ==================== FILTERING ====================
-
-        function filterData() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const subject = subjectFilter.value;
-            
-            filteredData = allData.filter(item => {
-                const matchSearch = 
-                    item.name?.toLowerCase().includes(searchTerm) ||
-                    item.email?.toLowerCase().includes(searchTerm) ||
-                    item.phone?.toLowerCase().includes(searchTerm) ||
-                    item.message?.toLowerCase().includes(searchTerm);
-                
-                const matchSubject = !subject || item.subject === subject;
-                
-                return matchSearch && matchSubject;
-            });
-            
-            displayData(filteredData);
-        }
-
-        // ==================== DISPLAY DATA ====================
-
-        function displayData(data) {
-            gridView.innerHTML = '';
-            tableBody.innerHTML = '';
-            
-            if (data.length === 0) {
-                gridView.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1/-1;">
-                        <div class="icon">🔍</div>
-                        <h2>No Results Found</h2>
-                        <p>Try different search terms</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            data.forEach((item, index) => {
-                const uniqueId = `item_${index}_${item.email}`;
-                
-                const card = createCard(item, index, uniqueId);
-                gridView.appendChild(card);
-                
-                const row = createTableRow(item, index, uniqueId);
-                tableBody.appendChild(row);
-            });
-        }
-
-        // ==================== CREATE CARD ====================
-
-        function createCard(item, index, uniqueId) {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.id = uniqueId;
-            card.style.animationDelay = `${index * 0.05}s`;
-            
-            if (selectedItems.has(uniqueId)) {
-                card.classList.add('selected');
-            }
-            
-            const initials = getInitials(item.name || 'NA');
-            const hasPhoto = item.photo && item.photo.trim() !== '';
-            
-            card.innerHTML = `
-                <div class="card-checkbox">
-                    <input type="checkbox" 
-                           id="checkbox_${uniqueId}" 
-                           ${selectedItems.has(uniqueId) ? 'checked' : ''}
-                           onchange="toggleSelection('${uniqueId}', this.checked)">
-                </div>
-                <div class="card-image">
-                    ${hasPhoto 
-                        ? `<img src="${item.photo}" alt="Photo" onclick="openModal('${item.photo}')" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                           <div class="no-image" style="display: none;">📷</div>
-                           <a href="${item.photo}" target="_blank" class="view-full">View Full</a>`
-                        : `<div class="no-image">📷</div>`
+                if (response.ok) {
+                    let data;
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (e) {
+                        throw new Error('Invalid JSON response: ' + responseText);
                     }
-                </div>
-                <div class="card-content">
-                    <div class="card-header">
-                        <div class="avatar">${initials}</div>
-                        <div class="card-title">
-                            <h3>${escapeHtml(item.name) || 'No Name'}</h3>
-                            <span>${escapeHtml(item.email) || 'No Email'}</span>
-                        </div>
-                    </div>
-                    
-                    ${item.subject ? `<div class="card-subject">${escapeHtml(item.subject)}</div>` : ''}
-                    
-                    <p class="card-message">${escapeHtml(item.message) || 'No message'}</p>
-                    
-                    <div class="card-info">
-                        <div class="card-info-item">
-                            <span class="icon">📧</span>
-                            <a href="mailto:${item.email}">${escapeHtml(item.email) || 'N/A'}</a>
-                        </div>
-                        <div class="card-info-item">
-                            <span class="icon">📱</span>
-                            <a href="tel:${item.phone}">${escapeHtml(item.phone) || 'N/A'}</a>
-                        </div>
-                    </div>
-                    
-                    <div class="card-timestamp">
-                        <span>🕐</span> ${escapeHtml(item.timestamp) || 'No timestamp'}
-                    </div>
-                </div>
-            `;
-            
-            return card;
-        }
 
-        // ==================== CREATE TABLE ROW ====================
-
-        function createTableRow(item, index, uniqueId) {
-            const row = document.createElement('tr');
-            row.id = `row_${uniqueId}`;
-            
-            if (selectedItems.has(uniqueId)) {
-                row.classList.add('selected');
-            }
-            
-            const hasPhoto = item.photo && item.photo.trim() !== '';
-            
-            row.innerHTML = `
-                <td class="checkbox-cell">
-                    <input type="checkbox" 
-                           id="table_checkbox_${uniqueId}" 
-                           ${selectedItems.has(uniqueId) ? 'checked' : ''}
-                           onchange="toggleSelection('${uniqueId}', this.checked)">
-                </td>
-                <td class="photo-cell">
-                    ${hasPhoto 
-                        ? `<img src="${item.photo}" alt="Photo" onclick="openModal('${item.photo}')" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22><rect fill=%22%23f3f4f6%22 width=%2260%22 height=%2260%22/><text x=%2230%22 y=%2235%22 text-anchor=%22middle%22 font-size=%2220%22>📷</text></svg>'">`
-                        : `<div style="width:60px;height:60px;background:#f3f4f6;border-radius:10px;display:flex;align-items:center;justify-content:center;">📷</div>`
-                    }
-                </td>
-                <td><strong>${escapeHtml(item.name) || 'N/A'}</strong></td>
-                <td><a href="mailto:${item.email}">${escapeHtml(item.email) || 'N/A'}</a></td>
-                <td><a href="tel:${item.phone}">${escapeHtml(item.phone) || 'N/A'}</a></td>
-                <td>${escapeHtml(item.subject) || 'N/A'}</td>
-                <td class="message-cell" title="${escapeHtml(item.message)}">${escapeHtml(item.message) || 'N/A'}</td>
-                <td>${escapeHtml(item.timestamp) || 'N/A'}</td>
-            `;
-            
-            return row;
-        }
-
-        // ==================== SELECTION ====================
-
-        function toggleSelection(uniqueId, isChecked) {
-            if (isChecked) {
-                selectedItems.add(uniqueId);
-            } else {
-                selectedItems.delete(uniqueId);
-            }
-            
-            // Update card/row visual
-            const card = document.getElementById(uniqueId);
-            const row = document.getElementById(`row_${uniqueId}`);
-            
-            if (card) {
-                card.classList.toggle('selected', isChecked);
-            }
-            if (row) {
-                row.classList.toggle('selected', isChecked);
-            }
-            
-            // Sync checkboxes
-            const cardCheckbox = document.getElementById(`checkbox_${uniqueId}`);
-            const tableCheckbox = document.getElementById(`table_checkbox_${uniqueId}`);
-            
-            if (cardCheckbox) cardCheckbox.checked = isChecked;
-            if (tableCheckbox) tableCheckbox.checked = isChecked;
-            
-            updateSelectedCount();
-            updateSelectAllCheckbox();
-        }
-
-        function toggleSelectAll(e) {
-            const isChecked = e.target.checked;
-            
-            filteredData.forEach((item, index) => {
-                const uniqueId = `item_${index}_${item.email}`;
-                if (isChecked) {
-                    selectedItems.add(uniqueId);
-                } else {
-                    selectedItems.delete(uniqueId);
-                }
-            });
-            
-            // Update all checkboxes
-            document.querySelectorAll('.card-checkbox input[type="checkbox"]').forEach(cb => {
-                cb.checked = isChecked;
-            });
-            document.querySelectorAll('.checkbox-cell input[type="checkbox"]').forEach(cb => {
-                cb.checked = isChecked;
-            });
-            
-            // Update visual
-            document.querySelectorAll('.card').forEach(card => {
-                card.classList.toggle('selected', isChecked);
-            });
-            document.querySelectorAll('.data-table tbody tr').forEach(row => {
-                row.classList.toggle('selected', isChecked);
-            });
-            
-            // Sync both select all checkboxes
-            selectAllCheckbox.checked = isChecked;
-            selectAllTableCheckbox.checked = isChecked;
-            
-            updateSelectedCount();
-        }
-
-        function updateSelectAllCheckbox() {
-            const allSelected = filteredData.length > 0 && selectedItems.size === filteredData.length;
-            selectAllCheckbox.checked = allSelected;
-            selectAllTableCheckbox.checked = allSelected;
-        }
-
-        function updateSelectedCount() {
-            selectedCountEl.textContent = selectedItems.size;
-            
-            const hasSelection = selectedItems.size > 0;
-            downloadPdfBtn.disabled = !hasSelection;
-            printBtn.disabled = !hasSelection;
-            downloadCsvBtn.disabled = !hasSelection;
-        }
-
-        // ==================== PDF DOWNLOAD ====================
-
-        function downloadPDF() {
-            const selectedData = getSelectedData();
-            if (selectedData.length === 0) {
-                alert('Please select at least one item');
-                return;
-            }
-
-            // Prepare PDF template
-            const pdfTemplate = document.getElementById('pdfTemplate');
-            const pdfTableBody = document.getElementById('pdfTableBody');
-            
-            // Set date
-            document.getElementById('pdfDate').textContent = new Date().toLocaleString();
-            
-            // Set stats
-            document.getElementById('pdfTotalRecords').textContent = selectedData.length;
-            document.getElementById('pdfWithPhotos').textContent = 
-                selectedData.filter(item => item.photo && item.photo.trim() !== '').length;
-            
-            // Build table rows
-            pdfTableBody.innerHTML = '';
-            selectedData.forEach((item, index) => {
-                const hasPhoto = item.photo && item.photo.trim() !== '';
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>
-                        ${hasPhoto 
-                            ? `<img src="${item.photo}" class="photo-thumb" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2250%22 height=%2250%22><rect fill=%22%23f3f4f6%22 width=%2250%22 height=%2250%22/><text x=%2225%22 y=%2230%22 text-anchor=%22middle%22 font-size=%2214%22>📷</text></svg>'">`
-                            : '📷 No Photo'
+                    if (Array.isArray(data)) {
+                        if (data.length === 0) {
+                            statusEl.className = 'status success';
+                            statusEl.innerHTML = '✅ API Connected! But your Google Sheet is <strong>EMPTY</strong>. Add some data first.';
+                            resultEl.textContent = '[] (Empty array - no data in sheet)';
+                        } else {
+                            statusEl.className = 'status success';
+                            statusEl.innerHTML = `✅ API Connected! Found <strong>${data.length} records</strong>. Your API is working correctly!`;
+                            resultEl.textContent = JSON.stringify(data, null, 2);
                         }
-                    </td>
-                    <td>${escapeHtml(item.name) || 'N/A'}</td>
-                    <td>${escapeHtml(item.email) || 'N/A'}</td>
-                    <td>${escapeHtml(item.phone) || 'N/A'}</td>
-                    <td>${escapeHtml(item.subject) || 'N/A'}</td>
-                    <td class="message-text">${escapeHtml(item.message) || 'N/A'}</td>
-                    <td>${escapeHtml(item.timestamp) || 'N/A'}</td>
-                `;
-                pdfTableBody.appendChild(row);
-            });
+                    } else {
+                        statusEl.className = 'status error';
+                        statusEl.innerHTML = '⚠️ Unexpected response format';
+                        resultEl.textContent = JSON.stringify(data, null, 2);
+                    }
+                } else {
+                    statusEl.className = 'status error';
+                    statusEl.innerHTML = `❌ API Error: HTTP ${response.status}`;
+                    resultEl.textContent = responseText;
 
-            // Show template temporarily
-            pdfTemplate.style.display = 'block';
-
-            // Generate PDF
-            const opt = {
-                margin: 10,
-                filename: `submissions_report_${new Date().toISOString().split('T')[0]}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { 
-                    scale: 2,
-                    useCORS: true,
-                    allowTaint: true
-                },
-                jsPDF: { 
-                    unit: 'mm', 
-                    format: 'a4', 
-                    orientation: 'landscape' 
+                    if (response.status === 401) {
+                        statusEl.innerHTML += '<br><br>🔑 <strong>401 Unauthorized:</strong> Check your API key or create a new SheetDB connection.';
+                    } else if (response.status === 404) {
+                        statusEl.innerHTML += '<br><br>🔍 <strong>404 Not Found:</strong> The API URL is incorrect. Check your SheetDB dashboard.';
+                    } else if (response.status === 429) {
+                        statusEl.innerHTML += '<br><br>⚠️ <strong>429 Too Many Requests:</strong> You exceeded the free plan limit. Create a new SheetDB API.';
+                    }
                 }
-            };
 
-            html2pdf().set(opt).from(pdfTemplate).save().then(() => {
-                pdfTemplate.style.display = 'none';
-            });
+            } catch (error) {
+                console.error('Fetch error:', error);
+                
+                statusEl.className = 'status error';
+                statusEl.innerHTML = `❌ Connection Failed: ${error.message}`;
+                
+                resultEl.textContent = `Error Details:\n\n${error.toString()}\n\nPossible causes:\n1. Wrong API URL\n2. CORS issue (try opening URL directly in browser)\n3. Network/Internet issue\n4. SheetDB service down`;
+
+                // Additional help
+                statusEl.innerHTML += `
+                    <br><br>
+                    <strong>Try these steps:</strong><br>
+                    1. Open this URL directly in your browser: <a href="${apiUrl}" target="_blank">${apiUrl}</a><br>
+                    2. Check if you see data or an error<br>
+                    3. Make sure your Google Sheet is shared publicly
+                `;
+            }
         }
 
-        // ==================== PRINT ====================
+        async function testWithSample() {
+            const apiUrl = document.getElementById('apiUrl').value.trim();
+            const statusEl = document.getElementById('status');
+            const resultEl = document.getElementById('result');
 
-        function printSelected() {
-            const selectedData = getSelectedData();
-            if (selectedData.length === 0) {
-                alert('Please select at least one item');
+            if (!apiUrl) {
+                statusEl.style.display = 'block';
+                statusEl.className = 'status error';
+                statusEl.innerHTML = '❌ Please enter your SheetDB API URL first';
                 return;
             }
 
-            // Create print content
-            const printContent = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Submissions Report</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; padding: 20px; }
-                        h1 { color: #667eea; text-align: center; }
-                        .meta { text-align: center; color: #666; margin-bottom: 20px; }
-                        table { width: 100%; border-collapse: collapse; }
-                        th { background: #667eea; color: white; padding: 10px; text-align: left; }
-                        td { padding: 10px; border-bottom: 1px solid #ddd; }
-                        tr:nth-child(even) { background: #f9f9f9; }
-                        img { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; }
-                        .footer { text-align: center; margin-top: 20px; color: #999; font-size: 12px; }
-                    </style>
-                </head>
-                <body>
-                    <h1>📋 Submissions Report</h1>
-                    <p class="meta">Generated on ${new Date().toLocaleString()} | ${selectedData.length} Records</p>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Photo</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Subject</th>
-                                <th>Message</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${selectedData.map((item, index) => `
-                                <tr>
-                                    <td>${index + 1}</td>
-                                    <td>${item.photo ? `<img src="${item.photo}">` : '📷'}</td>
-                                    <td>${escapeHtml(item.name) || 'N/A'}</td>
-                                    <td>${escapeHtml(item.email) || 'N/A'}</td>
-                                    <td>${escapeHtml(item.phone) || 'N/A'}</td>
-                                    <td>${escapeHtml(item.subject) || 'N/A'}</td>
-                                    <td>${escapeHtml(item.message) || 'N/A'}</td>
-                                    <td>${escapeHtml(item.timestamp) || 'N/A'}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                    <p class="footer">Your Company Name - Confidential Report</p>
-                </body>
-                </html>
-            `;
+            statusEl.style.display = 'block';
+            statusEl.className = 'status loading';
+            statusEl.innerHTML = '⏳ Sending test data...';
 
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(printContent);
-            printWindow.document.close();
-            printWindow.onload = function() {
-                printWindow.print();
+            const testData = {
+                name: 'Test User',
+                email: 'test@example.com',
+                phone: '1234567890',
+                subject: 'Test Subject',
+                message: 'This is a test message from debug tool',
+                photo: '',
+                timestamp: new Date().toLocaleString()
             };
-        }
 
-        // ==================== CSV DOWNLOAD ====================
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ data: testData })
+                });
 
-        function downloadCSV() {
-            const selectedData = getSelectedData();
-            if (selectedData.length === 0) {
-                alert('Please select at least one item');
-                return;
-            }
+                const result = await response.json();
 
-            // CSV headers
-            const headers = ['Name', 'Email', 'Phone', 'Subject', 'Message', 'Photo URL', 'Timestamp'];
-            
-            // CSV rows
-            const rows = selectedData.map(item => [
-                item.name || '',
-                item.email || '',
-                item.phone || '',
-                item.subject || '',
-                (item.message || '').replace(/"/g, '""'),
-                item.photo || '',
-                item.timestamp || ''
-            ]);
+                if (response.ok) {
+                    statusEl.className = 'status success';
+                    statusEl.innerHTML = '✅ Test data sent successfully! Check your Google Sheet.';
+                    resultEl.textContent = JSON.stringify(result, null, 2);
+                } else {
+                    statusEl.className = 'status error';
+                    statusEl.innerHTML = '❌ Failed to send test data';
+                    resultEl.textContent = JSON.stringify(result, null, 2);
+                }
 
-            // Build CSV content
-            let csvContent = headers.join(',') + '\n';
-            rows.forEach(row => {
-                csvContent += row.map(cell => `"${cell}"`).join(',') + '\n';
-            });
-
-            // Download
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `submissions_${new Date().toISOString().split('T')[0]}.csv`;
-            link.click();
-        }
-
-        // ==================== HELPER FUNCTIONS ====================
-
-        function getSelectedData() {
-            return filteredData.filter((item, index) => {
-                const uniqueId = `item_${index}_${item.email}`;
-                return selectedItems.has(uniqueId);
-            });
-        }
-
-        function getInitials(name) {
-            return name
-                .split(' ')
-                .map(word => word[0])
-                .join('')
-                .toUpperCase()
-                .slice(0, 2);
-        }
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function setView(view) {
-            currentView = view;
-            
-            const gridBtn = document.getElementById('gridViewBtn');
-            const tableBtn = document.getElementById('tableViewBtn');
-            
-            if (view === 'grid') {
-                gridView.classList.remove('hidden');
-                tableView.classList.remove('active');
-                gridBtn.classList.add('active');
-                tableBtn.classList.remove('active');
-            } else {
-                gridView.classList.add('hidden');
-                tableView.classList.add('active');
-                gridBtn.classList.remove('active');
-                tableBtn.classList.add('active');
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.innerHTML = `❌ Error: ${error.message}`;
+                resultEl.textContent = error.toString();
             }
         }
 
-        function openModal(imageUrl) {
-            modalImage.src = imageUrl;
-            imageModal.classList.add('show');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            imageModal.classList.remove('show');
-            document.body.style.overflow = 'auto';
-        }
-
-        imageModal.addEventListener('click', function(e) {
-            if (e.target === imageModal) {
-                closeModal();
-            }
-        });
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
-        });
-
-        function showLoading(show) {
-            loadingState.style.display = show ? 'block' : 'none';
-            gridView.style.display = show ? 'none' : 'grid';
-        }
-
-        function showEmpty(show) {
-            emptyState.style.display = show ? 'block' : 'none';
-            gridView.style.display = show ? 'none' : 'grid';
+        // Auto-test if URL is already saved
+        if (savedUrl) {
+            setTimeout(() => {
+                testAPI();
+            }, 500);
         }
     </script>
 </body>
