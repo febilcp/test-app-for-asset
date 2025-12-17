@@ -6,6 +6,9 @@
     <title>All Submissions</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- PDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -44,6 +47,7 @@
             justify-content: center;
             gap: 15px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
         .nav-links a {
@@ -94,14 +98,15 @@
             opacity: 0.9;
         }
 
-        /* Search & Filter */
+        /* Controls */
         .controls {
             max-width: 1200px;
-            margin: 0 auto 30px;
+            margin: 0 auto 20px;
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
             justify-content: center;
+            align-items: center;
         }
 
         .search-box {
@@ -152,11 +157,6 @@
             transform: translateY(-2px);
         }
 
-        .filter-btn.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
         .refresh-btn {
             padding: 15px 25px;
             background: #10b981;
@@ -197,6 +197,96 @@
         .view-toggle button.active {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
+        }
+
+        /* ==================== PDF/PRINT CONTROLS ==================== */
+        .export-controls {
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .select-all-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-weight: 500;
+        }
+
+        .select-all-wrapper input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .selected-count {
+            color: white;
+            font-weight: 600;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+        }
+
+        .export-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 14px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .export-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .export-btn.pdf-btn {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+        }
+
+        .export-btn.pdf-btn:hover:not(:disabled) {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .export-btn.print-btn {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .export-btn.print-btn:hover:not(:disabled) {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .export-btn.excel-btn {
+            background: #22c55e;
+            color: white;
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
+        }
+
+        .export-btn.excel-btn:hover:not(:disabled) {
+            background: #16a34a;
+            transform: translateY(-2px);
         }
 
         /* Container */
@@ -243,10 +333,6 @@
             margin-bottom: 10px;
         }
 
-        .empty-state p {
-            opacity: 0.8;
-        }
-
         /* Grid View */
         .grid-view {
             display: grid;
@@ -262,6 +348,7 @@
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             animation: fadeInUp 0.5s ease;
+            position: relative;
         }
 
         @keyframes fadeInUp {
@@ -278,6 +365,26 @@
         .card:hover {
             transform: translateY(-5px);
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .card.selected {
+            box-shadow: 0 0 0 3px #667eea, 0 25px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Card Checkbox */
+        .card-checkbox {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 10;
+        }
+
+        .card-checkbox input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: #667eea;
+            border-radius: 6px;
         }
 
         /* Card Image */
@@ -413,10 +520,6 @@
             text-decoration: none;
         }
 
-        .card-info-item a:hover {
-            text-decoration: underline;
-        }
-
         .card-timestamp {
             margin-top: 15px;
             padding-top: 15px;
@@ -471,10 +574,26 @@
             background: #f9fafb;
         }
 
+        .data-table tbody tr.selected {
+            background: #ede9fe;
+        }
+
         .data-table td {
             padding: 15px;
             font-size: 14px;
             color: #4b5563;
+        }
+
+        .data-table .checkbox-cell {
+            width: 50px;
+            text-align: center;
+        }
+
+        .data-table .checkbox-cell input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
         }
 
         .data-table .photo-cell img {
@@ -520,7 +639,6 @@
             max-width: 90%;
             max-height: 90%;
             border-radius: 10px;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
         }
 
         .modal-close {
@@ -530,11 +648,163 @@
             font-size: 40px;
             color: white;
             cursor: pointer;
-            transition: transform 0.3s ease;
         }
 
-        .modal-close:hover {
-            transform: scale(1.2);
+        /* ==================== PDF TEMPLATE (Hidden) ==================== */
+        .pdf-template {
+            display: none;
+            font-family: 'Poppins', Arial, sans-serif;
+            background: white;
+            padding: 40px;
+            width: 210mm;
+        }
+
+        .pdf-header {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 3px solid #667eea;
+            margin-bottom: 30px;
+        }
+
+        .pdf-header h1 {
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .pdf-header p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .pdf-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f3f4f6;
+            border-radius: 10px;
+        }
+
+        .pdf-meta-item {
+            text-align: center;
+        }
+
+        .pdf-meta-item .label {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .pdf-meta-item .value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .pdf-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .pdf-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px 10px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .pdf-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 11px;
+            color: #374151;
+            vertical-align: top;
+        }
+
+        .pdf-table tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .pdf-table .photo-thumb {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .pdf-table .message-text {
+            max-width: 200px;
+            word-wrap: break-word;
+        }
+
+        .pdf-footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: #9ca3af;
+            font-size: 11px;
+        }
+
+        /* Card PDF Template */
+        .pdf-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .pdf-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            page-break-inside: avoid;
+        }
+
+        .pdf-card-image {
+            height: 120px;
+            background: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pdf-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .pdf-card-content {
+            padding: 15px;
+        }
+
+        .pdf-card-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .pdf-card-email {
+            font-size: 11px;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .pdf-card-message {
+            font-size: 11px;
+            color: #4b5563;
+            line-height: 1.5;
+        }
+
+        .pdf-card-footer {
+            font-size: 10px;
+            color: #9ca3af;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #f3f4f6;
         }
 
         /* Footer */
@@ -582,6 +852,10 @@
                 max-width: 100%;
             }
 
+            .export-controls {
+                flex-direction: column;
+            }
+
             .data-table {
                 font-size: 12px;
             }
@@ -589,6 +863,39 @@
             .data-table th,
             .data-table td {
                 padding: 10px 8px;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+            }
+
+            .header, .nav-links, .stats-bar, .controls, 
+            .export-controls, .view-toggle, .footer,
+            .whatsapp-float, .modal {
+                display: none !important;
+            }
+
+            .container {
+                max-width: 100% !important;
+            }
+
+            .grid-view {
+                display: block !important;
+            }
+
+            .card {
+                break-inside: avoid;
+                box-shadow: none !important;
+                border: 1px solid #ddd;
+                margin-bottom: 20px;
+            }
+
+            .card-checkbox {
+                display: none !important;
             }
         }
     </style>
@@ -619,6 +926,30 @@
             <div class="stat-number" id="withPhotoCount">-</div>
             <div class="stat-label">With Photos</div>
         </div>
+    </div>
+
+    <!-- Export Controls -->
+    <div class="export-controls">
+        <div class="select-all-wrapper">
+            <input type="checkbox" id="selectAll">
+            <label for="selectAll">Select All</label>
+        </div>
+        
+        <div class="selected-count">
+            <span id="selectedCount">0</span> selected
+        </div>
+
+        <button class="export-btn pdf-btn" id="downloadPdfBtn" disabled onclick="downloadPDF()">
+            📄 Download PDF
+        </button>
+
+        <button class="export-btn print-btn" id="printBtn" disabled onclick="printSelected()">
+            🖨️ Print
+        </button>
+
+        <button class="export-btn excel-btn" id="downloadCsvBtn" disabled onclick="downloadCSV()">
+            📊 Download CSV
+        </button>
     </div>
 
     <!-- Controls -->
@@ -674,6 +1005,9 @@
             <table class="data-table">
                 <thead>
                     <tr>
+                        <th class="checkbox-cell">
+                            <input type="checkbox" id="selectAllTable">
+                        </th>
                         <th>Photo</th>
                         <th>Name</th>
                         <th>Email</th>
@@ -685,6 +1019,49 @@
                 </thead>
                 <tbody id="tableBody"></tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- PDF Template (Hidden - Used for generating PDF) -->
+    <div class="pdf-template" id="pdfTemplate">
+        <div class="pdf-header">
+            <h1>📋 Submissions Report</h1>
+            <p>Generated on <span id="pdfDate"></span></p>
+        </div>
+
+        <div class="pdf-meta">
+            <div class="pdf-meta-item">
+                <div class="label">Total Records</div>
+                <div class="value" id="pdfTotalRecords">0</div>
+            </div>
+            <div class="pdf-meta-item">
+                <div class="label">With Photos</div>
+                <div class="value" id="pdfWithPhotos">0</div>
+            </div>
+            <div class="pdf-meta-item">
+                <div class="label">Report Type</div>
+                <div class="value">Selected Items</div>
+            </div>
+        </div>
+
+        <table class="pdf-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Photo</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Subject</th>
+                    <th>Message</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody id="pdfTableBody"></tbody>
+        </table>
+
+        <div class="pdf-footer">
+            Generated by Your Company Name | Confidential Report
         </div>
     </div>
 
@@ -701,9 +1078,9 @@
 
     <script>
         // =====================================================
-        // 🔴🔴🔴 IMPORTANT: REPLACE WITH YOUR SHEETDB API URL 🔴🔴🔴
+        // 🔴🔴🔴 REPLACE WITH YOUR SHEETDB API URL 🔴🔴🔴
         // =====================================================
-        const SHEETDB_API_URL = 'https://sheetdb.io/api/v1/z9br7effr4tm1';
+        const SHEETDB_API_URL = 'https://sheetdb.io/api/v1/z9br7effr4tm1E';
         // =====================================================
 
         // DOM Elements
@@ -716,14 +1093,22 @@
         const subjectFilter = document.getElementById('subjectFilter');
         const imageModal = document.getElementById('imageModal');
         const modalImage = document.getElementById('modalImage');
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const selectAllTableCheckbox = document.getElementById('selectAllTable');
+        const selectedCountEl = document.getElementById('selectedCount');
+        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+        const printBtn = document.getElementById('printBtn');
+        const downloadCsvBtn = document.getElementById('downloadCsvBtn');
 
         // Stats elements
         const totalCount = document.getElementById('totalCount');
         const todayCount = document.getElementById('todayCount');
         const withPhotoCount = document.getElementById('withPhotoCount');
 
-        // Store all data
+        // Store data
         let allData = [];
+        let filteredData = [];
+        let selectedItems = new Set();
         let currentView = 'grid';
 
         // Load data on page load
@@ -733,9 +1118,16 @@
         searchInput.addEventListener('input', filterData);
         subjectFilter.addEventListener('change', filterData);
 
-        // Load data from SheetDB
+        // Select All functionality
+        selectAllCheckbox.addEventListener('change', toggleSelectAll);
+        selectAllTableCheckbox.addEventListener('change', toggleSelectAll);
+
+        // ==================== DATA LOADING ====================
+
         async function loadData() {
             showLoading(true);
+            selectedItems.clear();
+            updateSelectedCount();
             
             try {
                 const response = await fetch(SHEETDB_API_URL);
@@ -747,18 +1139,16 @@
                 const data = await response.json();
                 console.log('Fetched data:', data);
                 
-                // Reverse to show newest first
                 allData = data.reverse();
+                filteredData = [...allData];
                 
-                // Update stats
                 updateStats(allData);
                 
-                // Display data
                 if (allData.length === 0) {
                     showEmpty(true);
                 } else {
                     showEmpty(false);
-                    displayData(allData);
+                    displayData(filteredData);
                 }
                 
             } catch (error) {
@@ -775,11 +1165,11 @@
             }
         }
 
-        // Update statistics
+        // ==================== STATS ====================
+
         function updateStats(data) {
             totalCount.textContent = data.length;
             
-            // Count today's submissions
             const today = new Date().toDateString();
             const todaySubmissions = data.filter(item => {
                 const itemDate = new Date(item.timestamp).toDateString();
@@ -787,17 +1177,17 @@
             });
             todayCount.textContent = todaySubmissions.length;
             
-            // Count submissions with photos
             const withPhotos = data.filter(item => item.photo && item.photo.trim() !== '');
             withPhotoCount.textContent = withPhotos.length;
         }
 
-        // Filter data based on search and subject
+        // ==================== FILTERING ====================
+
         function filterData() {
             const searchTerm = searchInput.value.toLowerCase();
             const subject = subjectFilter.value;
             
-            let filtered = allData.filter(item => {
+            filteredData = allData.filter(item => {
                 const matchSearch = 
                     item.name?.toLowerCase().includes(searchTerm) ||
                     item.email?.toLowerCase().includes(searchTerm) ||
@@ -809,12 +1199,12 @@
                 return matchSearch && matchSubject;
             });
             
-            displayData(filtered);
+            displayData(filteredData);
         }
 
-        // Display data in grid and table
+        // ==================== DISPLAY DATA ====================
+
         function displayData(data) {
-            // Clear existing content
             gridView.innerHTML = '';
             tableBody.innerHTML = '';
             
@@ -830,29 +1220,41 @@
             }
             
             data.forEach((item, index) => {
-                // Create Grid Card
-                const card = createCard(item, index);
+                const uniqueId = `item_${index}_${item.email}`;
+                
+                const card = createCard(item, index, uniqueId);
                 gridView.appendChild(card);
                 
-                // Create Table Row
-                const row = createTableRow(item);
+                const row = createTableRow(item, index, uniqueId);
                 tableBody.appendChild(row);
             });
         }
 
-        // Create card element
-        function createCard(item, index) {
+        // ==================== CREATE CARD ====================
+
+        function createCard(item, index, uniqueId) {
             const card = document.createElement('div');
             card.className = 'card';
-            card.style.animationDelay = `${index * 0.1}s`;
+            card.id = uniqueId;
+            card.style.animationDelay = `${index * 0.05}s`;
+            
+            if (selectedItems.has(uniqueId)) {
+                card.classList.add('selected');
+            }
             
             const initials = getInitials(item.name || 'NA');
             const hasPhoto = item.photo && item.photo.trim() !== '';
             
             card.innerHTML = `
+                <div class="card-checkbox">
+                    <input type="checkbox" 
+                           id="checkbox_${uniqueId}" 
+                           ${selectedItems.has(uniqueId) ? 'checked' : ''}
+                           onchange="toggleSelection('${uniqueId}', this.checked)">
+                </div>
                 <div class="card-image">
                     ${hasPhoto 
-                        ? `<img src="${item.photo}" alt="Submission Photo" onclick="openModal('${item.photo}')" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        ? `<img src="${item.photo}" alt="Photo" onclick="openModal('${item.photo}')" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                            <div class="no-image" style="display: none;">📷</div>
                            <a href="${item.photo}" target="_blank" class="view-full">View Full</a>`
                         : `<div class="no-image">📷</div>`
@@ -891,12 +1293,25 @@
             return card;
         }
 
-        // Create table row
-        function createTableRow(item) {
+        // ==================== CREATE TABLE ROW ====================
+
+        function createTableRow(item, index, uniqueId) {
             const row = document.createElement('tr');
+            row.id = `row_${uniqueId}`;
+            
+            if (selectedItems.has(uniqueId)) {
+                row.classList.add('selected');
+            }
+            
             const hasPhoto = item.photo && item.photo.trim() !== '';
             
             row.innerHTML = `
+                <td class="checkbox-cell">
+                    <input type="checkbox" 
+                           id="table_checkbox_${uniqueId}" 
+                           ${selectedItems.has(uniqueId) ? 'checked' : ''}
+                           onchange="toggleSelection('${uniqueId}', this.checked)">
+                </td>
                 <td class="photo-cell">
                     ${hasPhoto 
                         ? `<img src="${item.photo}" alt="Photo" onclick="openModal('${item.photo}')" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22><rect fill=%22%23f3f4f6%22 width=%2260%22 height=%2260%22/><text x=%2230%22 y=%2235%22 text-anchor=%22middle%22 font-size=%2220%22>📷</text></svg>'">`
@@ -914,7 +1329,273 @@
             return row;
         }
 
-        // Helper: Get initials from name
+        // ==================== SELECTION ====================
+
+        function toggleSelection(uniqueId, isChecked) {
+            if (isChecked) {
+                selectedItems.add(uniqueId);
+            } else {
+                selectedItems.delete(uniqueId);
+            }
+            
+            // Update card/row visual
+            const card = document.getElementById(uniqueId);
+            const row = document.getElementById(`row_${uniqueId}`);
+            
+            if (card) {
+                card.classList.toggle('selected', isChecked);
+            }
+            if (row) {
+                row.classList.toggle('selected', isChecked);
+            }
+            
+            // Sync checkboxes
+            const cardCheckbox = document.getElementById(`checkbox_${uniqueId}`);
+            const tableCheckbox = document.getElementById(`table_checkbox_${uniqueId}`);
+            
+            if (cardCheckbox) cardCheckbox.checked = isChecked;
+            if (tableCheckbox) tableCheckbox.checked = isChecked;
+            
+            updateSelectedCount();
+            updateSelectAllCheckbox();
+        }
+
+        function toggleSelectAll(e) {
+            const isChecked = e.target.checked;
+            
+            filteredData.forEach((item, index) => {
+                const uniqueId = `item_${index}_${item.email}`;
+                if (isChecked) {
+                    selectedItems.add(uniqueId);
+                } else {
+                    selectedItems.delete(uniqueId);
+                }
+            });
+            
+            // Update all checkboxes
+            document.querySelectorAll('.card-checkbox input[type="checkbox"]').forEach(cb => {
+                cb.checked = isChecked;
+            });
+            document.querySelectorAll('.checkbox-cell input[type="checkbox"]').forEach(cb => {
+                cb.checked = isChecked;
+            });
+            
+            // Update visual
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.toggle('selected', isChecked);
+            });
+            document.querySelectorAll('.data-table tbody tr').forEach(row => {
+                row.classList.toggle('selected', isChecked);
+            });
+            
+            // Sync both select all checkboxes
+            selectAllCheckbox.checked = isChecked;
+            selectAllTableCheckbox.checked = isChecked;
+            
+            updateSelectedCount();
+        }
+
+        function updateSelectAllCheckbox() {
+            const allSelected = filteredData.length > 0 && selectedItems.size === filteredData.length;
+            selectAllCheckbox.checked = allSelected;
+            selectAllTableCheckbox.checked = allSelected;
+        }
+
+        function updateSelectedCount() {
+            selectedCountEl.textContent = selectedItems.size;
+            
+            const hasSelection = selectedItems.size > 0;
+            downloadPdfBtn.disabled = !hasSelection;
+            printBtn.disabled = !hasSelection;
+            downloadCsvBtn.disabled = !hasSelection;
+        }
+
+        // ==================== PDF DOWNLOAD ====================
+
+        function downloadPDF() {
+            const selectedData = getSelectedData();
+            if (selectedData.length === 0) {
+                alert('Please select at least one item');
+                return;
+            }
+
+            // Prepare PDF template
+            const pdfTemplate = document.getElementById('pdfTemplate');
+            const pdfTableBody = document.getElementById('pdfTableBody');
+            
+            // Set date
+            document.getElementById('pdfDate').textContent = new Date().toLocaleString();
+            
+            // Set stats
+            document.getElementById('pdfTotalRecords').textContent = selectedData.length;
+            document.getElementById('pdfWithPhotos').textContent = 
+                selectedData.filter(item => item.photo && item.photo.trim() !== '').length;
+            
+            // Build table rows
+            pdfTableBody.innerHTML = '';
+            selectedData.forEach((item, index) => {
+                const hasPhoto = item.photo && item.photo.trim() !== '';
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>
+                        ${hasPhoto 
+                            ? `<img src="${item.photo}" class="photo-thumb" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2250%22 height=%2250%22><rect fill=%22%23f3f4f6%22 width=%2250%22 height=%2250%22/><text x=%2225%22 y=%2230%22 text-anchor=%22middle%22 font-size=%2214%22>📷</text></svg>'">`
+                            : '📷 No Photo'
+                        }
+                    </td>
+                    <td>${escapeHtml(item.name) || 'N/A'}</td>
+                    <td>${escapeHtml(item.email) || 'N/A'}</td>
+                    <td>${escapeHtml(item.phone) || 'N/A'}</td>
+                    <td>${escapeHtml(item.subject) || 'N/A'}</td>
+                    <td class="message-text">${escapeHtml(item.message) || 'N/A'}</td>
+                    <td>${escapeHtml(item.timestamp) || 'N/A'}</td>
+                `;
+                pdfTableBody.appendChild(row);
+            });
+
+            // Show template temporarily
+            pdfTemplate.style.display = 'block';
+
+            // Generate PDF
+            const opt = {
+                margin: 10,
+                filename: `submissions_report_${new Date().toISOString().split('T')[0]}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'landscape' 
+                }
+            };
+
+            html2pdf().set(opt).from(pdfTemplate).save().then(() => {
+                pdfTemplate.style.display = 'none';
+            });
+        }
+
+        // ==================== PRINT ====================
+
+        function printSelected() {
+            const selectedData = getSelectedData();
+            if (selectedData.length === 0) {
+                alert('Please select at least one item');
+                return;
+            }
+
+            // Create print content
+            const printContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Submissions Report</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        h1 { color: #667eea; text-align: center; }
+                        .meta { text-align: center; color: #666; margin-bottom: 20px; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th { background: #667eea; color: white; padding: 10px; text-align: left; }
+                        td { padding: 10px; border-bottom: 1px solid #ddd; }
+                        tr:nth-child(even) { background: #f9f9f9; }
+                        img { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; }
+                        .footer { text-align: center; margin-top: 20px; color: #999; font-size: 12px; }
+                    </style>
+                </head>
+                <body>
+                    <h1>📋 Submissions Report</h1>
+                    <p class="meta">Generated on ${new Date().toLocaleString()} | ${selectedData.length} Records</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Photo</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Subject</th>
+                                <th>Message</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${selectedData.map((item, index) => `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${item.photo ? `<img src="${item.photo}">` : '📷'}</td>
+                                    <td>${escapeHtml(item.name) || 'N/A'}</td>
+                                    <td>${escapeHtml(item.email) || 'N/A'}</td>
+                                    <td>${escapeHtml(item.phone) || 'N/A'}</td>
+                                    <td>${escapeHtml(item.subject) || 'N/A'}</td>
+                                    <td>${escapeHtml(item.message) || 'N/A'}</td>
+                                    <td>${escapeHtml(item.timestamp) || 'N/A'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <p class="footer">Your Company Name - Confidential Report</p>
+                </body>
+                </html>
+            `;
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            printWindow.onload = function() {
+                printWindow.print();
+            };
+        }
+
+        // ==================== CSV DOWNLOAD ====================
+
+        function downloadCSV() {
+            const selectedData = getSelectedData();
+            if (selectedData.length === 0) {
+                alert('Please select at least one item');
+                return;
+            }
+
+            // CSV headers
+            const headers = ['Name', 'Email', 'Phone', 'Subject', 'Message', 'Photo URL', 'Timestamp'];
+            
+            // CSV rows
+            const rows = selectedData.map(item => [
+                item.name || '',
+                item.email || '',
+                item.phone || '',
+                item.subject || '',
+                (item.message || '').replace(/"/g, '""'),
+                item.photo || '',
+                item.timestamp || ''
+            ]);
+
+            // Build CSV content
+            let csvContent = headers.join(',') + '\n';
+            rows.forEach(row => {
+                csvContent += row.map(cell => `"${cell}"`).join(',') + '\n';
+            });
+
+            // Download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `submissions_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        // ==================== HELPER FUNCTIONS ====================
+
+        function getSelectedData() {
+            return filteredData.filter((item, index) => {
+                const uniqueId = `item_${index}_${item.email}`;
+                return selectedItems.has(uniqueId);
+            });
+        }
+
         function getInitials(name) {
             return name
                 .split(' ')
@@ -924,7 +1605,6 @@
                 .slice(0, 2);
         }
 
-        // Helper: Escape HTML to prevent XSS
         function escapeHtml(text) {
             if (!text) return '';
             const div = document.createElement('div');
@@ -932,7 +1612,6 @@
             return div.innerHTML;
         }
 
-        // Toggle view (grid/table)
         function setView(view) {
             currentView = view;
             
@@ -952,7 +1631,6 @@
             }
         }
 
-        // Modal functions
         function openModal(imageUrl) {
             modalImage.src = imageUrl;
             imageModal.classList.add('show');
@@ -964,27 +1642,23 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Close modal on outside click
         imageModal.addEventListener('click', function(e) {
             if (e.target === imageModal) {
                 closeModal();
             }
         });
 
-        // Close modal on ESC key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeModal();
             }
         });
 
-        // Show/hide loading state
         function showLoading(show) {
             loadingState.style.display = show ? 'block' : 'none';
             gridView.style.display = show ? 'none' : 'grid';
         }
 
-        // Show/hide empty state
         function showEmpty(show) {
             emptyState.style.display = show ? 'block' : 'none';
             gridView.style.display = show ? 'none' : 'grid';
